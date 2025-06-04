@@ -7,7 +7,6 @@ import { motion } from "framer-motion"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Header } from "@/components/layout/header"
@@ -24,7 +23,7 @@ export default function CheckoutPage() {
   const [currentStep, setCurrentStep] = useState<CheckoutStep>("information")
   const [isProcessing, setIsProcessing] = useState(false)
 
-  // Mock cart items - substituir por planos
+  // Selected plan data
   const selectedPlan = {
     name: "Professional",
     price: 599,
@@ -40,7 +39,7 @@ export default function CheckoutPage() {
       "Alertas personalizados",
     ],
     discount: 25,
-    billing: "mensal", // ou "anual"
+    billing: "mensal" as const,
   }
 
   const subtotal = selectedPlan.price
@@ -95,6 +94,9 @@ export default function CheckoutPage() {
             className="mb-8"
           >
             <h1 className="text-3xl font-bold text-gray-900 text-center">Finalizar Assinatura</h1>
+            <p className="text-gray-600 text-center mt-2">
+              Complete sua assinatura do plano {selectedPlan.name} e comece sua avaliação gratuita
+            </p>
           </motion.div>
 
           <CheckoutSteps currentStep={currentStep} />
@@ -106,8 +108,8 @@ export default function CheckoutPage() {
                 {currentStep === "information" && (
                   <Card className="backdrop-blur-sm bg-white/80 border border-gray-100 shadow-md">
                     <CardHeader>
-                      <CardTitle>Informações Pessoais</CardTitle>
-                      <CardDescription>Preencha seus dados para entrega</CardDescription>
+                      <CardTitle>Informações da Conta</CardTitle>
+                      <CardDescription>Crie sua conta para acessar o dashboard</CardDescription>
                     </CardHeader>
                     <CardContent className="space-y-6">
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -127,10 +129,41 @@ export default function CheckoutPage() {
                       </div>
 
                       <div className="space-y-2">
+                        <Label htmlFor="company">Empresa</Label>
+                        <Input id="company" placeholder="Nome da sua empresa" />
+                      </div>
+
+                      <div className="space-y-2">
                         <Label htmlFor="phone">Telefone</Label>
                         <Input id="phone" placeholder="(00) 00000-0000" />
                       </div>
 
+                      <div className="space-y-2">
+                        <Label htmlFor="password">Senha</Label>
+                        <Input id="password" type="password" placeholder="Crie uma senha segura" />
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label htmlFor="confirm-password">Confirmar Senha</Label>
+                        <Input id="confirm-password" type="password" placeholder="Confirme sua senha" />
+                      </div>
+                    </CardContent>
+                    <CardFooter className="flex justify-end">
+                      <Button onClick={handleNextStep} className="bg-indigo-600 hover:bg-indigo-700">
+                        Continuar
+                        <ArrowRight className="ml-2 h-4 w-4" />
+                      </Button>
+                    </CardFooter>
+                  </Card>
+                )}
+
+                {currentStep === "shipping" && (
+                  <Card className="backdrop-blur-sm bg-white/80 border border-gray-100 shadow-md">
+                    <CardHeader>
+                      <CardTitle>Informações de Cobrança</CardTitle>
+                      <CardDescription>Endereço para emissão da nota fiscal</CardDescription>
+                    </CardHeader>
+                    <CardContent className="space-y-6">
                       <div className="space-y-2">
                         <Label htmlFor="address">Endereço</Label>
                         <Input id="address" placeholder="Rua, número, complemento" />
@@ -150,63 +183,11 @@ export default function CheckoutPage() {
                           <Input id="zip" placeholder="00000-000" />
                         </div>
                       </div>
-                    </CardContent>
-                    <CardFooter className="flex justify-end">
-                      <Button onClick={handleNextStep} className="bg-indigo-600 hover:bg-indigo-700">
-                        Continuar para Entrega
-                        <ArrowRight className="ml-2 h-4 w-4" />
-                      </Button>
-                    </CardFooter>
-                  </Card>
-                )}
 
-                {currentStep === "shipping" && (
-                  <Card className="backdrop-blur-sm bg-white/80 border border-gray-100 shadow-md">
-                    <CardHeader>
-                      <CardTitle>Método de Entrega</CardTitle>
-                      <CardDescription>Escolha como deseja receber seu pedido</CardDescription>
-                    </CardHeader>
-                    <CardContent className="space-y-6">
-                      <RadioGroup defaultValue="standard">
-                        <div className="flex items-center space-x-2 border rounded-lg p-4 cursor-pointer hover:bg-gray-50">
-                          <RadioGroupItem value="standard" id="standard" />
-                          <Label htmlFor="standard" className="flex-1 cursor-pointer">
-                            <div className="flex justify-between items-center">
-                              <div>
-                                <p className="font-medium">Entrega Padrão</p>
-                                <p className="text-sm text-gray-500">Entrega em 3-5 dias úteis</p>
-                              </div>
-                              <span className="font-medium text-green-600">Grátis</span>
-                            </div>
-                          </Label>
-                        </div>
-
-                        <div className="flex items-center space-x-2 border rounded-lg p-4 cursor-pointer hover:bg-gray-50">
-                          <RadioGroupItem value="express" id="express" />
-                          <Label htmlFor="express" className="flex-1 cursor-pointer">
-                            <div className="flex justify-between items-center">
-                              <div>
-                                <p className="font-medium">Entrega Expressa</p>
-                                <p className="text-sm text-gray-500">Entrega em 1-2 dias úteis</p>
-                              </div>
-                              <span className="font-medium">R$ 19,90</span>
-                            </div>
-                          </Label>
-                        </div>
-
-                        <div className="flex items-center space-x-2 border rounded-lg p-4 cursor-pointer hover:bg-gray-50">
-                          <RadioGroupItem value="same-day" id="same-day" />
-                          <Label htmlFor="same-day" className="flex-1 cursor-pointer">
-                            <div className="flex justify-between items-center">
-                              <div>
-                                <p className="font-medium">Entrega no Mesmo Dia</p>
-                                <p className="text-sm text-gray-500">Disponível apenas para algumas regiões</p>
-                              </div>
-                              <span className="font-medium">R$ 29,90</span>
-                            </div>
-                          </Label>
-                        </div>
-                      </RadioGroup>
+                      <div className="space-y-2">
+                        <Label htmlFor="cnpj">CNPJ (opcional)</Label>
+                        <Input id="cnpj" placeholder="00.000.000/0000-00" />
+                      </div>
                     </CardContent>
                     <CardFooter className="flex justify-between">
                       <Button variant="outline" onClick={handlePreviousStep}>
@@ -224,7 +205,7 @@ export default function CheckoutPage() {
                   <Card className="backdrop-blur-sm bg-white/80 border border-gray-100 shadow-md">
                     <CardHeader>
                       <CardTitle>Método de Pagamento</CardTitle>
-                      <CardDescription>Escolha como deseja pagar</CardDescription>
+                      <CardDescription>Escolha como deseja pagar sua assinatura</CardDescription>
                     </CardHeader>
                     <CardContent className="space-y-6">
                       <Tabs defaultValue="credit-card">
@@ -259,7 +240,7 @@ export default function CheckoutPage() {
                           <div className="flex items-center space-x-2">
                             <input type="checkbox" id="save-card" className="rounded border-gray-300" />
                             <Label htmlFor="save-card" className="text-sm">
-                              Salvar este cartão para compras futuras
+                              Salvar este cartão para futuras cobranças
                             </Label>
                           </div>
                         </TabsContent>
@@ -294,7 +275,7 @@ export default function CheckoutPage() {
                             <div>
                               <p className="font-medium">Boleto Bancário</p>
                               <p className="text-sm text-gray-500">
-                                O boleto será gerado após a confirmação do pedido. Vencimento em 3 dias úteis.
+                                O boleto será gerado após a confirmação. Vencimento em 3 dias úteis.
                               </p>
                             </div>
                             <Button variant="outline" className="w-full">
@@ -320,7 +301,7 @@ export default function CheckoutPage() {
                           </>
                         ) : (
                           <>
-                            Finalizar Compra
+                            Finalizar Assinatura
                             <ArrowRight className="ml-2 h-4 w-4" />
                           </>
                         )}
@@ -336,37 +317,43 @@ export default function CheckoutPage() {
                         <div className="mx-auto w-16 h-16 bg-green-100 rounded-full flex items-center justify-center">
                           <CheckCircle className="h-8 w-8 text-green-600" />
                         </div>
-                        <h2 className="text-2xl font-bold text-gray-900">Pedido Confirmado!</h2>
-                        <p className="text-gray-600">Seu pedido #12345 foi confirmado e está sendo processado.</p>
+                        <h2 className="text-2xl font-bold text-gray-900">Assinatura Confirmada!</h2>
+                        <p className="text-gray-600">
+                          Sua assinatura do plano {selectedPlan.name} foi confirmada. Sua avaliação gratuita de 14 dias
+                          começou agora!
+                        </p>
 
                         <div className="bg-gray-50 p-4 rounded-lg my-6">
-                          <h3 className="font-medium text-gray-900 mb-2">Detalhes do Pedido</h3>
+                          <h3 className="font-medium text-gray-900 mb-2">Detalhes da Assinatura</h3>
                           <div className="space-y-2 text-sm">
                             <div className="flex justify-between">
-                              <span className="text-gray-600">Data do Pedido</span>
-                              <span>{new Date().toLocaleDateString()}</span>
+                              <span className="text-gray-600">Plano</span>
+                              <span>{selectedPlan.name}</span>
                             </div>
                             <div className="flex justify-between">
-                              <span className="text-gray-600">Método de Pagamento</span>
-                              <span>Cartão de Crédito</span>
+                              <span className="text-gray-600">Valor Mensal</span>
+                              <span>R$ {selectedPlan.price}/mês</span>
                             </div>
                             <div className="flex justify-between">
-                              <span className="text-gray-600">Método de Entrega</span>
-                              <span>Entrega Padrão</span>
+                              <span className="text-gray-600">Avaliação Gratuita</span>
+                              <span>14 dias</span>
                             </div>
                             <div className="flex justify-between">
-                              <span className="text-gray-600">Previsão de Entrega</span>
-                              <span>3-5 dias úteis</span>
+                              <span className="text-gray-600">Primeira Cobrança</span>
+                              <span>{new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toLocaleDateString()}</span>
                             </div>
                           </div>
                         </div>
 
                         <div className="flex flex-col sm:flex-row gap-4 mt-6">
-                          <Button variant="outline" className="flex-1" onClick={() => router.push("/products")}>
-                            Continuar Comprando
+                          <Button
+                            className="flex-1 bg-indigo-600 hover:bg-indigo-700"
+                            onClick={() => router.push("/dashboard")}
+                          >
+                            Acessar Dashboard
                           </Button>
-                          <Button className="flex-1 bg-indigo-600 hover:bg-indigo-700" onClick={() => router.push("/")}>
-                            Ir para a Página Inicial
+                          <Button variant="outline" className="flex-1" onClick={() => router.push("/")}>
+                            Voltar ao Início
                           </Button>
                         </div>
                       </div>
@@ -383,13 +370,19 @@ export default function CheckoutPage() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.2 }}
               >
-                <CheckoutSummary cartItems={[selectedPlan]} subtotal={subtotal} shipping={0} tax={tax} total={total} />
+                <CheckoutSummary
+                  selectedPlan={selectedPlan}
+                  subtotal={subtotal}
+                  discount={discount}
+                  tax={tax}
+                  total={total}
+                />
 
                 <div className="mt-6 space-y-4">
                   <div className="flex items-center gap-3 p-4 bg-gray-50 rounded-lg">
                     <ShieldCheck className="h-5 w-5 text-green-600" />
                     <div>
-                      <p className="text-sm font-medium">Compra 100% Segura</p>
+                      <p className="text-sm font-medium">Pagamento 100% Seguro</p>
                       <p className="text-xs text-gray-600">Seus dados estão protegidos</p>
                     </div>
                   </div>
@@ -397,8 +390,8 @@ export default function CheckoutPage() {
                   <div className="flex items-center gap-3 p-4 bg-gray-50 rounded-lg">
                     <Truck className="h-5 w-5 text-indigo-600" />
                     <div>
-                      <p className="text-sm font-medium">Frete Grátis</p>
-                      <p className="text-xs text-gray-600">Para todo o Brasil</p>
+                      <p className="text-sm font-medium">Acesso Imediato</p>
+                      <p className="text-xs text-gray-600">Dashboard disponível após confirmação</p>
                     </div>
                   </div>
                 </div>

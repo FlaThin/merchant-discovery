@@ -1,4 +1,5 @@
 "use client"
+
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
@@ -27,8 +28,8 @@ export function CheckoutSummary({ selectedPlan, subtotal, discount, tax, total }
     <Card className="sticky top-4 backdrop-blur-sm bg-white/80 border border-gray-100 shadow-md">
       <CardHeader>
         <CardTitle className="flex items-center justify-between">
-          <span>Resumo do Pedido</span>
-          {/* <Badge variant="secondary">{cartItems.length} itens</Badge> */}
+          <span>Resumo da Assinatura</span>
+          <Badge variant="secondary">Plano Selecionado</Badge>
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-6">
@@ -93,13 +94,38 @@ export function CheckoutSummary({ selectedPlan, subtotal, discount, tax, total }
           </div>
         </div>
 
-        {/* Trial Info */}
-        <div className="bg-green-50 border border-green-200 rounded-lg p-3">
-          <div className="flex items-center gap-2 mb-1">
-            <Gift className="w-4 h-4 text-green-600" />
-            <span className="text-sm font-medium text-green-800">Avaliação Gratuita</span>
+        {/* Savings */}
+        {discount > 0 && (
+          <div className="bg-green-50 border border-green-200 rounded-lg p-3">
+            <div className="flex items-center justify-between">
+              <span className="text-sm font-medium text-green-800">Você está economizando:</span>
+              <span className="font-bold text-green-800">R$ {discount.toFixed(2)}/mês</span>
+            </div>
           </div>
-          <p className="text-xs text-green-700">Primeiros 14 dias grátis. Cancele a qualquer momento.</p>
+        )}
+
+        {/* Trial Info */}
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+          <div className="flex items-center gap-2 mb-1">
+            <Gift className="w-4 h-4 text-blue-600" />
+            <span className="text-sm font-medium text-blue-800">Avaliação Gratuita</span>
+          </div>
+          <p className="text-xs text-blue-700">Primeiros 14 dias grátis. Cancele a qualquer momento.</p>
+        </div>
+
+        {/* Promo Code */}
+        <div className="space-y-2">
+          <label className="text-sm font-medium text-gray-700">Código promocional</label>
+          <div className="flex gap-2">
+            <input
+              type="text"
+              placeholder="Digite seu código"
+              className="flex-1 px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+            />
+            <button className="px-4 py-2 bg-gray-100 text-gray-700 rounded-md text-sm hover:bg-gray-200 transition-colors">
+              Aplicar
+            </button>
+          </div>
         </div>
       </CardContent>
     </Card>
