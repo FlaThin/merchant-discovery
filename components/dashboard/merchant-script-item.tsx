@@ -8,6 +8,7 @@ import { StatusIndicator } from "../ui/status-indicator"
 import { ReviewQueue } from "./review-queue"
 import { ChevronDown, ChevronUp } from "lucide-react"
 import type { MerchantScript } from "../../types/dashboard"
+import { cn } from "@/lib/utils"
 
 interface MerchantScriptItemProps {
   script: MerchantScript
@@ -29,38 +30,17 @@ export function MerchantScriptItem({ script }: MerchantScriptItemProps) {
   const hasReviewQueue = script.reviewQueue && script.reviewQueue.length > 0
 
   return (
-    <div className="space-y-4">
-      <div className="border rounded-lg p-4 bg-white hover:shadow-sm transition-shadow duration-200">
+    <div className="border rounded-lg bg-white overflow-hidden">
+      {/* Script info */}
+      <div className="p-4 hover:shadow-sm transition-shadow duration-200">
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-3">
             <StatusIndicator status={script.status} size="sm" />
             <h3 className="font-semibold text-gray-900">{script.name}</h3>
           </div>
-          <div className="flex items-center gap-2">
-            <Badge variant={script.status === "completed" ? "default" : "secondary"}>
-              {getStatusLabel(script.status)}
-            </Badge>
-            {hasPendingItems && hasReviewQueue && (
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setShowReviewQueue(!showReviewQueue)}
-                className="flex items-center gap-1"
-              >
-                {showReviewQueue ? (
-                  <>
-                    <ChevronUp className="w-4 h-4" />
-                    Ocultar Queue
-                  </>
-                ) : (
-                  <>
-                    <ChevronDown className="w-4 h-4" />
-                    Ver Queue ({script.pending})
-                  </>
-                )}
-              </Button>
-            )}
-          </div>
+          <Badge variant={script.status === "completed" ? "default" : "secondary"}>
+            {getStatusLabel(script.status)}
+          </Badge>
         </div>
 
         <div className="grid grid-cols-2 md:grid-cols-5 gap-4 text-sm">
@@ -89,10 +69,39 @@ export function MerchantScriptItem({ script }: MerchantScriptItemProps) {
             </div>
           )}
         </div>
+        {hasPendingItems && hasReviewQueue && (
+          <div className="mt-4 pt-3 border-t border-gray-200">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setShowReviewQueue(!showReviewQueue)}
+              className="flex items-center gap-2"
+            >
+              {showReviewQueue ? (
+                <>
+                  <ChevronUp className="w-4 h-4" />
+                  Ocultar Review Queue
+                </>
+              ) : (
+                <>
+                  <ChevronDown className="w-4 h-4" />
+                  Ver Review Queue ({script.pending} pendentes)
+                </>
+              )}
+            </Button>
+          </div>
+        )}
       </div>
 
       {/* Review Queue */}
-      {showReviewQueue && hasReviewQueue && <ReviewQueue items={script.reviewQueue!} scriptName={script.name} />}
+      <div
+        className={cn(
+          "overflow-hidden transition-all duration-300 ease-in-out",
+          showReviewQueue ? "max-h-[500px] border-t" : "max-h-0",
+        )}
+      >
+        {hasReviewQueue && <ReviewQueue items={script.reviewQueue!} scriptName={script.name} />}
+      </div>
     </div>
   )
 }
