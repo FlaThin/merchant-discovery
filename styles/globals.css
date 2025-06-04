@@ -92,3 +92,11 @@ body {
     @apply bg-background text-foreground;
   }
 }
+
+/* Remove sidebar hover background and text color */
+.sidebar [class*='hover:bg-sidebar-accent'] {
+  background-color: transparent !important;
+}
+.sidebar [class*='hover:text-sidebar-accent-foreground'] {
+  color: inherit !important;
+}

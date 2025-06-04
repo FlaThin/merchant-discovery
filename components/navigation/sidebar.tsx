@@ -47,7 +47,7 @@ export function Sidebar({ currentPage, isOpen, onNavigate, onToggle, scriptsNeed
       {/* Sidebar */}
       <aside
         className={cn(
-          "fixed left-0 top-0 h-full bg-white border-r border-gray-200 z-50 transition-all duration-300 ease-in-out flex flex-col",
+          "fixed left-0 top-0 h-screen bg-white border-r border-gray-200 z-50 transition-all duration-300 ease-in-out flex flex-col",
           isOpen ? "w-64" : "w-16",
           "lg:relative lg:translate-x-0",
           !isOpen && "-translate-x-full lg:translate-x-0",
